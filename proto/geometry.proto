@@ -1,0 +1,20 @@
+syntax = "proto3";
+package comapeo.shared;
+
+message Geometry {
+  Type type = 1;
+
+  repeated uint32 lengths = 2;
+  repeated double coordinates = 3;
+
+  // No support for GeometryCollection yet
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_POINT = 1;
+    TYPE_MULTI_POINT = 2;
+    TYPE_LINE_STRING = 3;
+    TYPE_MULTI_LINE_STRING = 4;
+    TYPE_POLYGON = 5;
+    TYPE_MULTI_POLYGON = 6;
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "name": "@comapeo/geometry",
+  "version": "1.0.0",
+  "description": "GeoJSON Geometry encoding and decoding to protobuf",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "npm-run-all build:clean build:proto build:json build:ts build:copy",
+    "build:clean": "rimraf dist intermediate generated",
+    "build:proto": "buf generate",
+    "build:json": "json2ts -i json/ -o dist/json",
+    "build:ts": "tsc",
+    "build:copy": "cpy 'intermediate/generated/**' 'intermediate/src/**' dist/",
+    "format:buf": "buf format --write ./proto",
+    "format:prettier": "prettier --write .",
+    "format": "npm-run-all --parallel format:*",
+    "lint:buf-format": "buf format --diff --exit-code ./proto",
+    "lint:prettier": "prettier --check .",
+    "lint": "npm-run-all --parallel lint:*",
+    "prepack": "npm run build",
+    "pretest": "npm run lint",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "Gregor MacLennan",
+  "license": "MIT",
+  "devDependencies": {
+    "@bufbuild/buf": "^1.39.0",
+    "cpy-cli": "^5.0.0",
+    "husky": "^9.1.5",
+    "json-schema-to-typescript": "^15.0.2",
+    "lint-staged": "^15.2.10",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "ts-proto": "^1.181.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "protobufjs": "^7.4.0"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  },
+  "files": [
+    "dist"
+  ]
+}

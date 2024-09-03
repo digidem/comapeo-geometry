@@ -1,0 +1,27 @@
+# Logs
+logs
+*.log
+
+# Cache files
+.eslintcache
+
+# Dependency directories
+node_modules/
+
+# Build output
+generated/
+dist/
+intermediate/
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+Thumbs.db

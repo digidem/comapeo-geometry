@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "lib": ["es2022"],
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "module": "node16",
+    "moduleResolution": "node16",
+    "allowJs": false,
+    "checkJs": false,
+    "emitDeclarationOnly": false,
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": false,
+    "rootDirs": ["src", "generated", "dist"],
+    "outDir": "intermediate"
+  },
+  "include": ["src/**/*.ts", "generated/**/*.ts"],
+  "exclude": ["node_modules"]
+}

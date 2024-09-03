@@ -1,0 +1,18 @@
+version: v2
+clean: true
+plugins:
+  - local: node_modules/ts-proto/protoc-gen-ts_proto
+    out: generated/proto
+    strategy: all
+    opt:
+      - esModuleInterop=true
+      - importSuffix=.js
+      - outputJsonMethods=false
+      - outputPartialMethods=false
+      - env=node
+      - useSnakeTypeName=false
+      - stringEnums=true
+      - removeEnumPrefix=true
+      - enumsAsLiterals=true
+inputs:
+  - directory: proto
