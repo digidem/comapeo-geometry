@@ -16,6 +16,7 @@
     "format:prettier": "prettier --write .",
     "format": "npm-run-all --parallel format:*",
     "lint:buf-format": "buf format --diff --exit-code ./proto",
+    "lint:buf-lint": "buf lint ./proto",
     "lint:prettier": "prettier --check .",
     "lint": "npm-run-all --parallel lint:*",
     "prepack": "npm run build",
