@@ -38,6 +38,7 @@ export const Geometry = {
   },
   decode(input: DecodeInput, length?: number): GeometryJson {
     const geometryProto = GeometryProto.decode(input, length)
+    validateRawCoords(geometryProto.coordinates)
     switch (geometryProto.type) {
       case GeometryType.POINT:
         return decodePoint(geometryProto)
@@ -101,7 +102,7 @@ function decodePolygon({
   coordinates: rawCoords,
   lengths,
 }: GeometryProto): Polygon {
-  lengths = lengths.length === 0 ? [rawCoords.length] : lengths
+  lengths = lengths.length === 0 ? [rawCoords.length / 2] : lengths
   const rings = new Array<LinearRing>(lengths.length)
   let start = 0
   for (let i = 0; i < lengths.length; i++) {
@@ -111,8 +112,8 @@ function decodePolygon({
       length,
     })
     validateLinearRing(ring)
-    rings.push(ring)
-    start += length
+    rings[i] = ring
+    start += length * 2
   }
   return {
     type: 'Polygon',
@@ -134,22 +135,23 @@ function decodeMultiPolygon({
   coordinates: rawCoords,
   lengths,
 }: GeometryProto): MultiPolygon {
-  lengths = lengths.length === 0 ? [1, rawCoords.length] : lengths
+  lengths = lengths.length === 0 ? [1, rawCoords.length / 2] : lengths
   const polygons = new Array<LinearRing[]>(lengths[0])
   let start = 0
   for (let i = 0, j = 1; i < lengths[0]; i++) {
-    const ringsLength = lengths[j]
+    const ringsLength = lengths[j + i]
     const rings = new Array<LinearRing>(ringsLength)
     for (let k = 0; k < ringsLength; k++) {
-      const length = lengths[j + 1 + k]
+      const length = lengths[j + 1 + i + k]
       const ring = readPositionArray(rawCoords, {
         start,
         length,
       })
       validateLinearRing(ring)
       rings[k] = ring
-      start += length
+      start += length * 2
     }
+    j += ringsLength
     polygons[i] = rings
   }
   return {
@@ -159,7 +161,7 @@ function decodeMultiPolygon({
 }
 
 function encodeMultiPolygon({ coordinates }: MultiPolygon): GeometryProto {
-  const lengths: number[] = []
+  const lengths: number[] = [coordinates.length]
   for (const polygon of coordinates) {
     lengths.push(polygon.length)
     for (const ring of polygon) {
