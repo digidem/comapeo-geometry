@@ -15,6 +15,6 @@ message Geometry {
     TYPE_LINE_STRING = 3;
     TYPE_MULTI_LINE_STRING = 4;
     TYPE_POLYGON = 5;
-    TYPE_MULTI_POLYGON = 6;
+    TYPE_MULTI_POLYGON = 7;
   }
 }
