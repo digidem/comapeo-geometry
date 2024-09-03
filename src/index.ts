@@ -55,9 +55,6 @@ export const Geometry = {
 }
 
 function decodePoint({ coordinates: rawCoords }: GeometryProto): Point {
-  if (rawCoords.length !== 2) {
-    throw new Error('Point must have exactly 2 coordinates')
-  }
   return {
     type: 'Point',
     coordinates: rawCoords as Position,
@@ -65,9 +62,6 @@ function decodePoint({ coordinates: rawCoords }: GeometryProto): Point {
 }
 
 function encodePoint({ coordinates }: Point): GeometryProto {
-  if (coordinates.length !== 2) {
-    throw new Error('Point must have exactly 2 coordinates')
-  }
   return {
     lengths: [],
     type: GeometryType.POINT,
@@ -78,9 +72,6 @@ function encodePoint({ coordinates }: Point): GeometryProto {
 function decodeMultiPoint({
   coordinates: rawCoords,
 }: GeometryProto): MultiPoint {
-  if (rawCoords.length % 2 !== 0) {
-    throw new Error('Invalid number of coordinates in MultiPoint')
-  }
   return {
     type: 'MultiPoint',
     coordinates: readPositionArray(rawCoords, {
@@ -135,7 +126,7 @@ function decodeMultiPolygon({
   coordinates: rawCoords,
   lengths,
 }: GeometryProto): MultiPolygon {
-  lengths = lengths.length === 0 ? [1, rawCoords.length / 2] : lengths
+  lengths = lengths.length === 0 ? [1, 1, rawCoords.length / 2] : lengths
   const polygons = new Array<LinearRing[]>(lengths[0])
   let start = 0
   for (let i = 0, j = 1; i < lengths[0]; i++) {
@@ -170,7 +161,7 @@ function encodeMultiPolygon({ coordinates }: MultiPolygon): GeometryProto {
   }
   return {
     // For simple (most common?) case, omit lengths
-    lengths: lengths.length === 2 ? [] : lengths,
+    lengths: lengths.length === 3 ? [] : lengths,
     type: GeometryType.MULTI_POLYGON,
     coordinates: coordinates.flat(3),
   }
@@ -178,10 +169,10 @@ function encodeMultiPolygon({ coordinates }: MultiPolygon): GeometryProto {
 
 function validateRawCoords(rawCoords: number[]) {
   if (rawCoords.length === 0) {
-    throw new Error('Missing required property `coordinates`')
+    throw new Error('`coordinates` must not be empty')
   }
   if (rawCoords.length % 2 !== 0) {
-    throw new Error('Invalid number of coordinates')
+    throw new Error('`coordinates` must have an even number of elements')
   }
 }
 
