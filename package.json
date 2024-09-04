@@ -56,6 +56,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "files": [
-    "dist"
+    "dist",
+    "json"
   ]
 }
