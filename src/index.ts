@@ -32,6 +32,7 @@ export const Geometry = {
       default:
         throw new ExhaustivenessError(
           message,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           `Unsupported geometry type: ${(message as any).type}`
         )
     }
