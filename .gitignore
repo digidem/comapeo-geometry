@@ -5,6 +5,9 @@ logs
 # Cache files
 .eslintcache
 
+# Test coverage
+/coverage/
+
 # Dependency directories
 node_modules/
 
