@@ -15,9 +15,8 @@
     "format:buf": "buf format --write ./proto",
     "format:prettier": "prettier --write .",
     "format": "npm-run-all --parallel format:*",
-    "lint:buf-format": "buf format --diff --exit-code ./proto",
     "lint:buf-lint": "buf lint ./proto",
-    "lint:prettier": "prettier --check .",
+    "lint:eslint": "eslint",
     "lint": "npm-run-all --parallel lint:*",
     "prepack": "npm run build",
     "pretest": "npm run build",
@@ -30,8 +29,11 @@
   "license": "MIT",
   "devDependencies": {
     "@bufbuild/buf": "^1.39.0",
+    "@eslint/js": "^9.9.1",
     "c8": "^10.1.2",
     "cpy-cli": "^5.0.0",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
     "husky": "^9.1.5",
     "json-schema-to-typescript": "^15.0.2",
     "lint-staged": "^15.2.10",
@@ -39,7 +41,8 @@
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
     "ts-proto": "^1.181.2",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.4.0"
   },
   "dependencies": {
     "protobufjs": "^7.4.0"
