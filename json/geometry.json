@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://comapeo.app/schemas/shared/geometry.json",
   "title": "Geometry",
-  "type": "array",
+  "type": "object",
   "description": "A subset of the GeoJSON geometry object.",
   "definitions": {
     "position": {
