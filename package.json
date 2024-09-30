@@ -1,6 +1,6 @@
 {
   "name": "@comapeo/geometry",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "GeoJSON Geometry encoding and decoding to protobuf",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
