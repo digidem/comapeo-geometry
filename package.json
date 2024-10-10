@@ -5,6 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./schema": "./json/geometry.json"
+  },
   "scripts": {
     "build": "npm-run-all build:clean build:proto build:json build:ts build:copy",
     "build:clean": "rimraf dist intermediate generated",
