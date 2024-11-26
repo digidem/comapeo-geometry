@@ -63,6 +63,7 @@ function decodePoint({ coordinates: rawCoords }: GeometryProto): Point {
 }
 
 function encodePoint({ coordinates }: Point): GeometryProto {
+  validatePosition(coordinates)
   return {
     lengths: [],
     type: GeometryType.POINT,
@@ -83,6 +84,7 @@ function decodeMultiPoint({
 }
 
 function encodeMultiPoint({ coordinates }: MultiPoint): GeometryProto {
+  for (const position of coordinates) validatePosition(position)
   return {
     lengths: [],
     type: GeometryType.MULTI_POINT,
@@ -114,7 +116,12 @@ function decodePolygon({
 }
 
 function encodePolygon({ coordinates }: Polygon): GeometryProto {
-  const lengths = coordinates.map((ring) => ring.length)
+  /** @type {number[]} */
+  const lengths = []
+  for (const ring of coordinates) {
+    for (const position of ring) validatePosition(position)
+    lengths.push(ring.length)
+  }
   return {
     // For simple (most common?) case, omit lengths
     lengths: lengths.length === 1 ? [] : lengths,
@@ -157,6 +164,7 @@ function encodeMultiPolygon({ coordinates }: MultiPolygon): GeometryProto {
   for (const polygon of coordinates) {
     lengths.push(polygon.length)
     for (const ring of polygon) {
+      for (const position of ring) validatePosition(position)
       lengths.push(ring.length)
     }
   }
@@ -175,7 +183,27 @@ function validateRawCoords(rawCoords: number[]) {
   if (rawCoords.length % 2 !== 0) {
     throw new Error('`coordinates` must have an even number of elements')
   }
+  for (let i = 0; i < rawCoords.length; i++) {
+    if (i % 2 === 0) {
+      validateLongitude(rawCoords[i])
+    } else {
+      validateLatitude(rawCoords[i])
+    }
+  }
 }
+
+function validatePosition(position: Readonly<Position>) {
+  validateLongitude(position[0])
+  validateLatitude(position[1])
+}
+
+const rangeValidator = (max: number) => (value: number) => {
+  if (Math.abs(value) > max) {
+    throw new Error(`Coordinate value must be between -${max} and ${max}`)
+  }
+}
+const validateLatitude = rangeValidator(90)
+const validateLongitude = rangeValidator(180)
 
 function validateLinearRing(ring: Position[]): asserts ring is LinearRing {
   if (ring.length < 4) {

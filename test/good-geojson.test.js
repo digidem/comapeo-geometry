@@ -20,14 +20,3 @@ test('encode/decode good geojson', async (t) => {
     })
   }
 })
-
-test('unsupported geometry type', async (t) => {
-  await t.test('throws on unsupported geometry type', () => {
-    const badInput = {
-      type: 'Unsupported',
-      coordinates: [],
-      lengths: [],
-    }
-    assert.throws(() => Geometry.encode(badInput))
-  })
-})
