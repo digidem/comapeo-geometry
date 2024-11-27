@@ -63,7 +63,6 @@ function decodePoint({ coordinates: rawCoords }: GeometryProto): Point {
 }
 
 function encodePoint({ coordinates }: Point): GeometryProto {
-  validatePosition(coordinates)
   return {
     lengths: [],
     type: GeometryType.POINT,
@@ -84,7 +83,6 @@ function decodeMultiPoint({
 }
 
 function encodeMultiPoint({ coordinates }: MultiPoint): GeometryProto {
-  for (const position of coordinates) validatePosition(position)
   return {
     lengths: [],
     type: GeometryType.MULTI_POINT,
@@ -116,12 +114,7 @@ function decodePolygon({
 }
 
 function encodePolygon({ coordinates }: Polygon): GeometryProto {
-  /** @type {number[]} */
-  const lengths = []
-  for (const ring of coordinates) {
-    for (const position of ring) validatePosition(position)
-    lengths.push(ring.length)
-  }
+  const lengths = coordinates.map((ring) => ring.length)
   return {
     // For simple (most common?) case, omit lengths
     lengths: lengths.length === 1 ? [] : lengths,
@@ -164,7 +157,6 @@ function encodeMultiPolygon({ coordinates }: MultiPolygon): GeometryProto {
   for (const polygon of coordinates) {
     lengths.push(polygon.length)
     for (const ring of polygon) {
-      for (const position of ring) validatePosition(position)
       lengths.push(ring.length)
     }
   }
@@ -190,11 +182,6 @@ function validateRawCoords(rawCoords: number[]) {
       validateLatitude(rawCoords[i])
     }
   }
-}
-
-function validatePosition(position: Readonly<Position>) {
-  validateLongitude(position[0])
-  validateLatitude(position[1])
 }
 
 const rangeValidator = (max: number) => (value: number) => {
