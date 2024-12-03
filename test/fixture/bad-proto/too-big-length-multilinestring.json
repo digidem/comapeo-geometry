@@ -1,0 +1,5 @@
+{
+  "type": "MultiLineString",
+  "lengths": [2, 1],
+  "coordinates": [12, 34]
+}
