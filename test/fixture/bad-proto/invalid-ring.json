@@ -1,5 +1,5 @@
 {
   "type": "TYPE_POLYGON",
-  "coordinates": [100, 101, 102, 103, 104, 105],
+  "coordinates": [1, 2, 3, 4, 5, 6],
   "lengths": []
 }
