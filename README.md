@@ -16,7 +16,7 @@ The encoding format is inspired by [Geobuf](https://github.com/mapbox/geobuf), w
 
 The subset of GeoJSON geometries supported are:
 
-- Only `Point`, `Polygon`, `MultiPoint` and `MultiPolygon` are supported.
+- Only `Point`, `LineString`, `MultiLineString`, `Polygon`, `MultiPoint` and `MultiPolygon` are supported.
 - Only 2D positions (coordinates) are supported.
 - No support for `bbox`.
 

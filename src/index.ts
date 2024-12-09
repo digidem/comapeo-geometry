@@ -4,6 +4,8 @@ import type {
   Position,
   LinearRing,
   Point,
+  LineString,
+  MultiLineString,
   MultiPoint,
   Polygon,
   MultiPolygon,
@@ -23,6 +25,10 @@ export const Geometry = {
     switch (message.type) {
       case 'Point':
         return GeometryProto.encode(encodePoint(message), writer)
+      case 'LineString':
+        return GeometryProto.encode(encodeLineString(message), writer)
+      case 'MultiLineString':
+        return GeometryProto.encode(encodeMultiLineString(message), writer)
       case 'MultiPoint':
         return GeometryProto.encode(encodeMultiPoint(message), writer)
       case 'Polygon':
@@ -43,6 +49,10 @@ export const Geometry = {
     switch (geometryProto.type) {
       case GeometryType.POINT:
         return decodePoint(geometryProto)
+      case GeometryType.LINE_STRING:
+        return decodeLineString(geometryProto)
+      case GeometryType.MULTI_LINE_STRING:
+        return decodeMultiLineString(geometryProto)
       case GeometryType.MULTI_POINT:
         return decodeMultiPoint(geometryProto)
       case GeometryType.POLYGON:
@@ -67,6 +77,63 @@ function encodePoint({ coordinates }: Point): GeometryProto {
     lengths: [],
     type: GeometryType.POINT,
     coordinates,
+  }
+}
+
+function decodeLineString({
+  coordinates: rawCoords,
+}: GeometryProto): LineString {
+  return {
+    type: 'LineString',
+    coordinates: readPositionArray(rawCoords, {
+      start: 0,
+      length: rawCoords.length / 2,
+    }),
+  }
+}
+
+function encodeLineString({ coordinates }: LineString): GeometryProto {
+  return {
+    lengths: [],
+    type: GeometryType.LINE_STRING,
+    coordinates: coordinates.flat(),
+  }
+}
+
+function decodeMultiLineString({
+  coordinates: rawCoords,
+  lengths,
+}: GeometryProto): MultiLineString {
+  let coordinates: Position[][]
+
+  if (lengths.length === 0) {
+    coordinates = [
+      readPositionArray(rawCoords, { start: 0, length: rawCoords.length / 2 }),
+    ]
+  } else {
+    let start = 0
+    coordinates = lengths.map((length) => {
+      const line = readPositionArray(rawCoords, { start, length })
+      start += length * 2
+      return line
+    })
+  }
+
+  return {
+    type: 'MultiLineString',
+    coordinates,
+  }
+}
+
+function encodeMultiLineString({
+  coordinates,
+}: MultiLineString): GeometryProto {
+  return {
+    lengths:
+      // For simple (most common?) case, omit lengths
+      coordinates.length === 1 ? [] : coordinates.map((line) => line.length),
+    type: GeometryType.MULTI_LINE_STRING,
+    coordinates: coordinates.flat(3),
   }
 }
 
