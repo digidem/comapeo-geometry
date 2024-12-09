@@ -104,13 +104,19 @@ function decodeMultiLineString({
   coordinates: rawCoords,
   lengths,
 }: GeometryProto): MultiLineString {
-  const coordinates: Position[][] = []
+  let coordinates: Position[][]
 
-  let start = 0
-  for (const length of lengths) {
-    const line = readPositionArray(rawCoords, { start, length })
-    coordinates.push(line)
-    start += length * 2
+  if (lengths.length === 0) {
+    coordinates = [
+      readPositionArray(rawCoords, { start: 0, length: rawCoords.length / 2 }),
+    ]
+  } else {
+    let start = 0
+    coordinates = lengths.map((length) => {
+      const line = readPositionArray(rawCoords, { start, length })
+      start += length * 2
+      return line
+    })
   }
 
   return {
@@ -123,7 +129,9 @@ function encodeMultiLineString({
   coordinates,
 }: MultiLineString): GeometryProto {
   return {
-    lengths: coordinates.map((line) => line.length),
+    lengths:
+      // For simple (most common?) case, omit lengths
+      coordinates.length === 1 ? [] : coordinates.map((line) => line.length),
     type: GeometryType.MULTI_LINE_STRING,
     coordinates: coordinates.flat(3),
   }
