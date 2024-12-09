@@ -234,7 +234,22 @@ function validateRawCoords(rawCoords: number[]) {
   if (rawCoords.length % 2 !== 0) {
     throw new Error('`coordinates` must have an even number of elements')
   }
+  for (let i = 0; i < rawCoords.length; i++) {
+    if (i % 2 === 0) {
+      validateLongitude(rawCoords[i])
+    } else {
+      validateLatitude(rawCoords[i])
+    }
+  }
 }
+
+const rangeValidator = (max: number) => (value: number) => {
+  if (Math.abs(value) > max) {
+    throw new Error(`Coordinate value must be between -${max} and ${max}`)
+  }
+}
+const validateLatitude = rangeValidator(90)
+const validateLongitude = rangeValidator(180)
 
 function validateLinearRing(ring: Position[]): asserts ring is LinearRing {
   if (ring.length < 4) {
