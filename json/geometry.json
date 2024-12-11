@@ -51,6 +51,47 @@
       "additionalProperties": false
     },
     {
+      "title": "LineString",
+      "type": "object",
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "LineString"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/position"
+          },
+          "minLength": 2
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "MultiLineString",
+      "type": "object",
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "MultiLineString"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/position"
+            },
+            "minLength": 2
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
       "title": "Polygon",
       "type": "object",
       "required": ["type", "coordinates"],
