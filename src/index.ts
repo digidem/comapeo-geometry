@@ -83,12 +83,18 @@ function encodePoint({ coordinates }: Point): GeometryProto {
 function decodeLineString({
   coordinates: rawCoords,
 }: GeometryProto): LineString {
+  const coordinates = readPositionArray(rawCoords, {
+    start: 0,
+    length: rawCoords.length / 2,
+  })
+  assertLengthIsAtLeast(
+    coordinates,
+    2,
+    'LineString must have at least 2 positions'
+  )
   return {
     type: 'LineString',
-    coordinates: readPositionArray(rawCoords, {
-      start: 0,
-      length: rawCoords.length / 2,
-    }),
+    coordinates,
   }
 }
 
@@ -104,20 +110,38 @@ function decodeMultiLineString({
   coordinates: rawCoords,
   lengths,
 }: GeometryProto): MultiLineString {
-  let coordinates: Position[][]
+  let coordinates
 
   if (lengths.length === 0) {
-    coordinates = [
-      readPositionArray(rawCoords, { start: 0, length: rawCoords.length / 2 }),
-    ]
+    const line = readPositionArray(rawCoords, {
+      start: 0,
+      length: rawCoords.length / 2,
+    })
+    assertLengthIsAtLeast(
+      line,
+      2,
+      'MultiLineString line must have at least 2 positions'
+    )
+    coordinates = [line]
   } else {
     let start = 0
     coordinates = lengths.map((length) => {
       const line = readPositionArray(rawCoords, { start, length })
+      assertLengthIsAtLeast(
+        line,
+        2,
+        'MultiLineString line must have at least 2 positions'
+      )
       start += length * 2
       return line
     })
   }
+
+  assertLengthIsAtLeast(
+    coordinates,
+    1,
+    'MultiLineString must have at least 1 line'
+  )
 
   return {
     type: 'MultiLineString',
@@ -140,12 +164,14 @@ function encodeMultiLineString({
 function decodeMultiPoint({
   coordinates: rawCoords,
 }: GeometryProto): MultiPoint {
+  const coordinates = readPositionArray(rawCoords, {
+    start: 0,
+    length: rawCoords.length / 2,
+  })
+  assertLengthIsAtLeast(coordinates, 1, 'MultiPoint must have at least 1 point')
   return {
     type: 'MultiPoint',
-    coordinates: readPositionArray(rawCoords, {
-      start: 0,
-      length: rawCoords.length / 2,
-    }),
+    coordinates,
   }
 }
 
@@ -174,6 +200,7 @@ function decodePolygon({
     rings[i] = ring
     start += length * 2
   }
+  assertLengthIsAtLeast(rings, 1, 'Polygon must have at least 1 ring')
   return {
     type: 'Polygon',
     coordinates: rings,
@@ -195,7 +222,7 @@ function decodeMultiPolygon({
   lengths,
 }: GeometryProto): MultiPolygon {
   lengths = lengths.length === 0 ? [1, 1, rawCoords.length / 2] : lengths
-  const polygons = new Array<LinearRing[]>(lengths[0])
+  const polygons = new Array<BuildArrayMinLength<LinearRing, 1, []>>(lengths[0])
   let start = 0
   for (let i = 0, j = 1; i < lengths[0]; i++) {
     const ringsLength = lengths[j + i]
@@ -211,8 +238,14 @@ function decodeMultiPolygon({
       start += length * 2
     }
     j += ringsLength
+    assertLengthIsAtLeast(rings, 1, 'Polygon must have at least 1 ring')
     polygons[i] = rings
   }
+  assertLengthIsAtLeast(
+    polygons,
+    1,
+    'MultiPolygon must have at least 1 polygon'
+  )
   return {
     type: 'MultiPolygon',
     coordinates: polygons,
@@ -260,9 +293,7 @@ const validateLatitude = rangeValidator(90)
 const validateLongitude = rangeValidator(180)
 
 function validateLinearRing(ring: Position[]): asserts ring is LinearRing {
-  if (ring.length < 4) {
-    throw new Error('Invalid number of coordinates in linear ring')
-  }
+  assertLengthIsAtLeast(ring, 4, 'Invalid number of coordinates in linear ring')
 }
 
 function readPositionArray(
@@ -285,6 +316,22 @@ function readPositionArray(
     positions[i] = position
   }
   return positions
+}
+
+type BuildArrayMinLength<
+  T,
+  N extends number,
+  Current extends T[],
+> = Current['length'] extends N
+  ? [...Current, ...T[]]
+  : BuildArrayMinLength<T, N, [...Current, T]>
+
+function assertLengthIsAtLeast<T, N extends number>(
+  arr: T[],
+  length: N,
+  message: string
+): asserts arr is BuildArrayMinLength<T, N, []> {
+  if (arr.length < length) throw new Error(message)
 }
 
 class ExhaustivenessError extends Error {
