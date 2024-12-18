@@ -1,5 +1,5 @@
 {
-  "type": "MultiLineString",
+  "type": "TYPE_MULTI_LINE_STRING",
   "lengths": [2, 1],
   "coordinates": [170.0, 45.0, 180.0, 45.0, -180.0, 45.0]
 }

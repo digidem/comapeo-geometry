@@ -1,5 +1,5 @@
 {
-  "type": "LineString",
+  "type": "TYPE_LINE_STRING",
   "lengths": [],
   "coordinates": [-170, 10]
 }

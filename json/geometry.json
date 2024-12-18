@@ -64,7 +64,7 @@
           "items": {
             "$ref": "#/definitions/position"
           },
-          "minLength": 2
+          "minItems": 2
         }
       },
       "additionalProperties": false
@@ -85,8 +85,9 @@
             "items": {
               "$ref": "#/definitions/position"
             },
-            "minLength": 2
-          }
+            "minItems": 2
+          },
+          "minItems": 1
         }
       },
       "additionalProperties": false
@@ -104,7 +105,8 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/linearRing"
-          }
+          },
+          "minItems": 1
         }
       },
       "additionalProperties": false
@@ -122,7 +124,8 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/position"
-          }
+          },
+          "minItems": 1
         }
       },
       "additionalProperties": false
@@ -142,8 +145,10 @@
             "type": "array",
             "items": {
               "$ref": "#/definitions/linearRing"
-            }
-          }
+            },
+            "minItems": 1
+          },
+          "minItems": 1
         }
       },
       "additionalProperties": false
