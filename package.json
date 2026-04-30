@@ -45,7 +45,7 @@
     "typescript-eslint": "^8.4.0"
   },
   "dependencies": {
-    "protobufjs": "^7.4.0"
+    "protobufjs": "^7.5.5"
   },
   "prettier": {
     "semi": false,
